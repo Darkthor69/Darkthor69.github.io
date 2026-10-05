@@ -1,7 +1,739 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calculadora de fechas</title>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+
+            background: #f2f4f7;
+            color: #222;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+
+            margin: 20px;
+            padding: 30px;
+
+            background: white;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 30px;
+
+            text-align: center;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+
+        button {
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .save-button {
+            margin-top: 5px;
+            margin-bottom: 25px;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+
+            background: #eef6ff;
+
+            border-radius: 10px;
+
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .result-date {
+            margin-top: 8px;
+
+            font-size: 24px;
+            font-weight: bold;
+
+            color: #2563eb;
+        }
+
+        .status {
+            margin-top: 15px;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+        .status.success {
+            color: #15803d;
+        }
+
+        .status.error {
+            color: #dc2626;
+        }
+
+        .divider {
+            margin: 25px 0;
+
+            border: none;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+
 <body>
 <h1>Ciruela</h1>
 <p>bobo</p>
+<div class="container">
+
+    <h1>Calculadora de fechas</h1>
+
+
+    <!-- ============================= -->
+    <!-- FECHA ALMACENADA -->
+    <!-- ============================= -->
+
+    <div class="field">
+
+        <label for="fecha">
+            Fecha y hora almacenada
+        </label>
+
+        <input
+            type="datetime-local"
+            id="fecha"
+        >
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- DELAY -->
+    <!-- ============================= -->
+
+    <div class="field">
+
+        <label for="delay">
+            Delay (minutos por día)
+        </label>
+
+        <input
+            type="number"
+            id="delay"
+            min="0"
+            step="1"
+            placeholder="Ejemplo: 31"
+        >
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- GUARDAR -->
+    <!-- ============================= -->
+
+    <button
+        class="save-button"
+        id="guardar"
+        onclick="guardarConfiguracion()"
+    >
+        Guardar cambios
+    </button>
+
+
+    <hr class="divider">
+
+
+    <!-- ============================= -->
+    <!-- NÚMERO DE DÍAS -->
+    <!-- ============================= -->
+
+    <div class="field">
+
+        <label for="dias">
+            Número de días
+        </label>
+
+        <input
+            type="number"
+            id="dias"
+            min="0"
+            step="1"
+            placeholder="Ejemplo: 5"
+        >
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- CALCULAR -->
+    <!-- ============================= -->
+
+    <button
+        onclick="calcular()"
+    >
+        Calcular
+    </button>
+
+
+    <!-- ============================= -->
+    <!-- RESULTADO -->
+    <!-- ============================= -->
+
+    <div class="result">
+
+        <div class="result-label">
+            Resultado
+        </div>
+
+        <div
+            class="result-date"
+            id="resultado"
+        >
+            —
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- ESTADO -->
+    <!-- ============================= -->
+
+    <div
+        class="status"
+        id="status"
+    ></div>
+
+</div>
+
+
+<script>
+
+    /*
+     * =====================================================
+     * CONFIGURACIÓN DE SUPABASE
+     * =====================================================
+     *
+     * Sustituye estos dos valores por los de TU proyecto.
+     *
+     * Supabase Dashboard:
+     *
+     * Project Settings
+     *      ↓
+     * API
+     *
+     */
+
+    const SUPABASE_URL =
+        "https://abwuiefiknhgmhigbpvi.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+        "sb_publishable_rkpINuFHTWyLaMJ6zKtglQ_AwUcVjnX";
+
+
+    /*
+     * Crear conexión con Supabase
+     */
+
+    const supabaseClient =
+        supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+
+    /*
+     * Elementos de la página
+     */
+
+    const fechaInput =
+        document.getElementById("fecha");
+
+    const delayInput =
+        document.getElementById("delay");
+
+    const diasInput =
+        document.getElementById("dias");
+
+    const resultado =
+        document.getElementById("resultado");
+
+    const status =
+        document.getElementById("status");
+
+    const guardarButton =
+        document.getElementById("guardar");
+
+
+    /*
+     * =====================================================
+     * MOSTRAR MENSAJES
+     * =====================================================
+     */
+
+    function mostrarStatus(mensaje, tipo) {
+
+        status.textContent = mensaje;
+
+        status.className =
+            "status " + tipo;
+
+    }
+
+
+    /*
+     * =====================================================
+     * CARGAR CONFIGURACIÓN
+     * =====================================================
+     */
+
+    async function cargarConfiguracion() {
+
+        mostrarStatus(
+            "Cargando configuración...",
+            ""
+        );
+
+
+        const { data, error } =
+            await supabaseClient
+
+                .from("configuracion")
+
+                .select(
+                    "fecha_hora, delay_minutos"
+                )
+
+                .eq("id", 1)
+
+                .single();
+
+
+        /*
+         * Comprobar errores
+         */
+
+	if (error) {
+
+   	 console.error("ERROR SUPABASE:", error);
+
+  	  mostrarStatus(
+    	    "Error: " + error.message,
+    	    "error"
+   	 );
+
+	}
+
+
+        /*
+         * Convertir fecha de Supabase
+         * al formato requerido por
+         * <input type="datetime-local">
+         */
+
+        if (data.fecha_hora) {
+
+            const fecha =
+                new Date(data.fecha_hora);
+
+
+            /*
+             * Obtener valores locales
+             */
+
+            const year =
+                fecha.getFullYear();
+
+            const month =
+                String(
+                    fecha.getMonth() + 1
+                ).padStart(2, "0");
+
+            const day =
+                String(
+                    fecha.getDate()
+                ).padStart(2, "0");
+
+            const hours =
+                String(
+                    fecha.getHours()
+                ).padStart(2, "0");
+
+            const minutes =
+                String(
+                    fecha.getMinutes()
+                ).padStart(2, "0");
+
+
+            fechaInput.value =
+                `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+
+        /*
+         * Cargar delay
+         */
+
+        delayInput.value =
+            data.delay_minutos;
+
+
+        mostrarStatus(
+            "Configuración cargada.",
+            "success"
+        );
+    }
+
+
+    /*
+     * =====================================================
+     * GUARDAR CONFIGURACIÓN
+     * =====================================================
+     */
+
+    async function guardarConfiguracion() {
+
+        const fecha =
+            fechaInput.value;
+
+        const delay =
+            Number(delayInput.value);
+
+
+        /*
+         * Validaciones
+         */
+
+        if (!fecha) {
+
+            mostrarStatus(
+                "Introduce una fecha y hora.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (
+            isNaN(delay) ||
+            delay < 0
+        ) {
+
+            mostrarStatus(
+                "Introduce un delay válido.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+         * Desactivar botón mientras guardamos
+         */
+
+        guardarButton.disabled = true;
+
+        guardarButton.textContent =
+            "Guardando...";
+
+
+        /*
+         * Convertir la fecha local
+         * a ISO para Supabase
+         */
+
+        const fechaISO =
+            new Date(fecha).toISOString();
+
+
+        /*
+         * Actualizar registro
+         */
+
+        const { error } =
+            await supabaseClient
+
+                .from("configuracion")
+
+                .update({
+
+                    fecha_hora:
+                        fechaISO,
+
+                    delay_minutos:
+                        delay
+
+                })
+
+                .eq("id", 1);
+
+
+        /*
+         * Comprobar resultado
+         */
+
+        if (error) {
+
+            console.error(error);
+
+            mostrarStatus(
+                "Error al guardar los cambios.",
+                "error"
+            );
+
+        } else {
+
+            mostrarStatus(
+                "Cambios guardados correctamente.",
+                "success"
+            );
+
+        }
+
+
+        /*
+         * Reactivar botón
+         */
+
+        guardarButton.disabled = false;
+
+        guardarButton.textContent =
+            "Guardar cambios";
+    }
+
+
+    /*
+     * =====================================================
+     * CALCULAR RESULTADO
+     * =====================================================
+     *
+     * Fórmula:
+     *
+     * fecha +
+     * (días × 24 horas) +
+     * (delay × días)
+     *
+     */
+
+    function calcular() {
+
+        const fechaValor =
+            fechaInput.value;
+
+        const delay =
+            Number(delayInput.value);
+
+        const dias =
+            Number(diasInput.value);
+
+
+        /*
+         * Validaciones
+         */
+
+        if (!fechaValor) {
+
+            alert(
+                "Introduce una fecha y hora."
+            );
+
+            return;
+        }
+
+
+        if (
+            isNaN(delay) ||
+            delay < 0
+        ) {
+
+            alert(
+                "Introduce un delay válido."
+            );
+
+            return;
+        }
+
+
+        if (
+            isNaN(dias) ||
+            dias < 0
+        ) {
+
+            alert(
+                "Introduce un número de días válido."
+            );
+
+            return;
+        }
+
+
+        /*
+         * Crear fecha
+         */
+
+        const fecha =
+            new Date(fechaValor);
+
+
+        /*
+         * Añadir días
+         *
+         * 1 día = 24 × 60 minutos
+         */
+
+        const minutosDeDias =
+            dias * 24 * 60;
+
+
+        fecha.setMinutes(
+            fecha.getMinutes() +
+            minutosDeDias
+        );
+
+
+        /*
+         * Añadir delay
+         *
+         * delay × número de días
+         */
+
+        const minutosDeDelay =
+            delay * dias;
+
+
+        fecha.setMinutes(
+            fecha.getMinutes() +
+            minutosDeDelay
+        );
+
+
+        /*
+         * Formatear resultado
+         */
+
+        const opciones = {
+
+            day: "numeric",
+
+            month: "long",
+
+            year: "numeric",
+
+            hour: "numeric",
+
+            minute: "2-digit",
+
+            hour12: false
+
+        };
+
+
+        const resultadoFormateado =
+            fecha.toLocaleString(
+                "es-ES",
+                opciones
+            );
+
+
+        resultado.textContent =
+            resultadoFormateado;
+    }
+
+
+    /*
+     * =====================================================
+     * INICIALIZAR
+     * =====================================================
+     */
+
+    cargarConfiguracion();
+
+</script>
+
 </body>
 </html>
