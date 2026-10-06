@@ -185,7 +185,18 @@
         >
 
     </div>
+    <div class="field">
 
+        <label for="fecha">
+            Consultar fecha especifica
+        </label>
+
+        <input
+            type="datetime-local"
+            id="fechaquery"
+        >
+
+    </div>
 
     <!-- ============================= -->
     <!-- CALCULAR -->
@@ -282,21 +293,6 @@
 
 <script>
 
-    /*
-     * =====================================================
-     * CONFIGURACIÓN DE SUPABASE
-     * =====================================================
-     *
-     * Sustituye estos dos valores por los de TU proyecto.
-     *
-     * Supabase Dashboard:
-     *
-     * Project Settings
-     *      ↓
-     * API
-     *
-     */
-
     const SUPABASE_URL =
         "https://abwuiefiknhgmhigbpvi.supabase.co";
 
@@ -336,6 +332,9 @@
 
     const guardarButton =
         document.getElementById("guardar");
+
+	const fechaQuery =
+        document.getElementById("fechaquery");
 
 
     /*
@@ -592,95 +591,38 @@
 
     function calcular() {
 
-        const fechaValor =
-            fechaInput.value;
-
-        const delay =
-            Number(delayInput.value);
-
-        const dias =
-            Number(diasInput.value);
+        const fechaValor = fechaInput.value;
+        const delay = Number(delayInput.value);
+        const dias = Number(diasInput.value);
+		const fechaObjetivo = fechaQuery.value;
 
 
-        /*
-         * Validaciones
-         */
-
+        //Validaciones
         if (!fechaValor) {
-
-            alert(
-                "Introduce una fecha y hora."
-            );
-
+            alert("Introduce una fecha y hora.");
+            return;
+        }
+		
+        if (isNaN(delay) || delay < 0) {
+            alert("Introduce un delay válido.");
             return;
         }
 
-
-        if (
-            isNaN(delay) ||
-            delay < 0
-        ) {
-
-            alert(
-                "Introduce un delay válido."
-            );
-
+        if (isNaN(dias) || dias < 0) {
+            alert("Introduce un número de días válido.");
             return;
         }
 
-
-        if (
-            isNaN(dias) ||
-            dias < 0
-        ) {
-
-            alert(
-                "Introduce un número de días válido."
-            );
-
-            return;
-        }
-
-
-        /*
-         * Crear fecha
-         */
-
+        //Crear fecha
         const fecha =
             new Date(fechaValor);
 
 
-        /*
-         * Añadir días
-         *
-         * 1 día = 24 × 60 minutos
-         */
+        // Conviertes a minutos y lo sumas a la fecha
+        const minutosDeDias = dias * 24 * 60;
+		const minutosDeDelay = delay * dias;
 
-        const minutosDeDias =
-            dias * 24 * 60;
-
-
-        fecha.setMinutes(
-            fecha.getMinutes() +
-            minutosDeDias
-        );
-
-
-        /*
-         * Añadir delay
-         *
-         * delay × número de días
-         */
-
-        const minutosDeDelay =
-            delay * dias;
-
-
-        fecha.setMinutes(
-            fecha.getMinutes() +
-            minutosDeDelay
-        );
-
+        fecha.setMinutes(fecha.getMinutes() + minutosDeDias + minutosDeDelay);
 
         /*
          * Formatear resultado
