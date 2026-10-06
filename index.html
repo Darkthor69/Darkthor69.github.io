@@ -191,7 +191,7 @@
             Consultar fecha especifica
         </label>
 
-        <input type="date" id="fechaquery" min=fecha.getTime()>
+        <input type="date" id="fechaquery">
 
     </div>
 
@@ -611,8 +611,7 @@
         }
 
         //Crear fecha
-        const fecha =
-            new Date(fechaValor);
+        const fecha = new Date(fechaValor);
 
 
         // Conviertes a minutos y lo sumas a la fecha
