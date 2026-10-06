@@ -428,7 +428,7 @@
 
 
         //Validaciones
-        if (!fechaValor) {
+        if (!fechaInput.value) {
             alert("Introduce una fecha y hora.");
             return;
         }
@@ -444,7 +444,7 @@
         }
 
         //Crear fecha
-        const fecha = new Date(fechaValor);
+        const fechaDespertar = new Date(fechaInput.value);
 		const fechaDormir = new Date(fechaDespertar);
 
 
@@ -452,12 +452,10 @@
         const minutosDeDias = dias * 24 * 60;
 		const minutosDeDelay = delay * dias;
 
-        fecha.setMinutes(fecha.getMinutes() + minutosDeDias + minutosDeDelay);
+        fechaDespertar.setMinutes(fechaDespertar.getMinutes() + minutosDeDias + minutosDeDelay);
 		fechaDormir.setMinutes(fechaDespertar.getMinutes() - 600);
-        /*
-         * Formatear resultado
-         */
-
+ 		
+		//Formatear resultado
         const opciones = {
             day: "numeric",
             month: "long",
@@ -467,7 +465,7 @@
             hour12: false
         };
 		
-        resultado.textContent = "Me duermo:" + fechaDormir.toLocaleString("es-ES",opciones) + "\n " + "Me despierto:" + fechaDespertar.toLocaleString("es-ES",opciones);
+        resultado.textContent = "Me duermo: " + fechaDormir.toLocaleString("es-ES",opciones) + "\n" + "Me despierto: " + fechaDespertar.toLocaleString("es-ES",opciones);
     }
 
 
