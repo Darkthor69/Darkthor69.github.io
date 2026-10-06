@@ -170,7 +170,53 @@
 
     <h1>Calculadora de cuando me despierto</h1>
 
+	    <div class="field">
 
+        <label for="dias">
+            Número de días
+        </label>
+
+        <input
+            type="number"
+            id="dias"
+            min="0"
+            step="1"
+            placeholder="Ejemplo: 5"
+        >
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- CALCULAR -->
+    <!-- ============================= -->
+
+    <button
+        onclick="calcular()"
+    >
+        Calcular
+    </button>
+
+
+    <!-- ============================= -->
+    <!-- RESULTADO -->
+    <!-- ============================= -->
+
+    <div class="result">
+
+        <div class="result-label">
+            Resultado
+        </div>
+
+        <div
+            class="result-date"
+            id="resultado"
+        >
+            —
+        </div>
+
+    </div>
+ <hr class="divider">
     <!-- ============================= -->
     <!-- FECHA ALMACENADA -->
     <!-- ============================= -->
@@ -221,62 +267,6 @@
     >
         Guardar cambios
     </button>
-
-
-    <hr class="divider">
-
-
-    <!-- ============================= -->
-    <!-- NÚMERO DE DÍAS -->
-    <!-- ============================= -->
-
-    <div class="field">
-
-        <label for="dias">
-            Número de días
-        </label>
-
-        <input
-            type="number"
-            id="dias"
-            min="0"
-            step="1"
-            placeholder="Ejemplo: 5"
-        >
-
-    </div>
-
-
-    <!-- ============================= -->
-    <!-- CALCULAR -->
-    <!-- ============================= -->
-
-    <button
-        onclick="calcular()"
-    >
-        Calcular
-    </button>
-
-
-    <!-- ============================= -->
-    <!-- RESULTADO -->
-    <!-- ============================= -->
-
-    <div class="result">
-
-        <div class="result-label">
-            Resultado
-        </div>
-
-        <div
-            class="result-date"
-            id="resultado"
-        >
-            —
-        </div>
-
-    </div>
-
 
     <!-- ============================= -->
     <!-- ESTADO -->
