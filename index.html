@@ -111,6 +111,7 @@
             font-size: 24px;
             font-weight: bold;
             color: #2563eb;
+			white-space: pre-line;
         }
 
         .status {
@@ -444,6 +445,7 @@
 
         //Crear fecha
         const fecha = new Date(fechaValor);
+		const fechaDormir = new Date(fechaDespertar);
 
 
         // Conviertes a minutos y lo sumas a la fecha
@@ -451,7 +453,7 @@
 		const minutosDeDelay = delay * dias;
 
         fecha.setMinutes(fecha.getMinutes() + minutosDeDias + minutosDeDelay);
-
+		fechaDormir.setMinutes(fechaDespertar.getMinutes() - 600);
         /*
          * Formatear resultado
          */
@@ -464,17 +466,8 @@
             minute: "2-digit",
             hour12: false
         };
-
-
-        const resultadoFormateado =
-            fecha.toLocaleString(
-                "es-ES",
-                opciones
-            );
-
-
-        resultado.textContent =
-            resultadoFormateado;
+		
+        resultado.textContent = "Me duermo:" + fechaDormir.toLocaleString("es-ES",opciones) + "\n " + "Me despierto:" + fechaDespertar.toLocaleString("es-ES",opciones);
     }
 
 
