@@ -133,70 +133,230 @@
             border: none;
             border-top: 1px solid #eee;
         }
+        .calendar {
+            width: 100%;
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Cabecera de los días */
+        .calendar-header {
+            display: grid;
+            grid-template-columns: 70px repeat(7, 1fr);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .day-header {
+            padding: 14px 8px;
+            width: 130px;
+            text-align: center;
+            font-weight: bold;
+            border-left: 1px solid #eee;
+        }
+
+        .day-header small {
+            display: block;
+            margin-top: 4px;
+            color: #777;
+            font-weight: normal;
+        }
+
+        /* Cuerpo */
+        .calendar-body {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            height: 720px;
+            overflow-y: auto;
+        }
+
+        /* Columna de horas */
+        .time-column {
+            position: relative;
+            border-right: 1px solid #ddd;
+            }
+
+        .time {
+            height: 28px;
+            position: relative;
+            font-size: 12px;
+            color: #777;
+            text-align: right;
+            padding-right: 8px;
+            padding-top: 20px;
+            transform: translateY(-7px);
+        }
+
+        /* Zona de los días */
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            position: relative;
+        }
+
+        .day {
+            position: relative;
+            border-left: 1px solid #eee;
+            /*
+            Cada hora ocupa 20px.
+            Por tanto, 24 horas = 480px.
+            */
+            height: 480px;
+            background-image:
+        linear-gradient(
+            to bottom,
+            #eee 1px,
+            transparent 1px
+        );
+
+            background-size: 100% 60px;
+        }
+
+        /* Línea de media hora */
+        .day::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 30px;
+            border-top: 1px dashed #f0f0f0;
+
+            /*
+            Se repite cada hora.
+            */
+        height: 60px;
+        background: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 29px,
+            #f5f5f5 30px,
+            #f5f5f5 31px
+        );
+
+        pointer-events: none;
+        }
+
+        /* Franjas */
+        .slot {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            border-radius: 6px;
+            padding: 7px 9px;
+            color: white;
+            font-size: 13px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+            z-index: 2;
+        }
+
+        .slot-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .slot-time {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        /* Colores */
+        .blue {
+            background: #4285f4;
+        }
+        .green {
+            background: #34a853;
+        }
+        .orange {
+            background: #fbbc04;
+            color: #222;
+        }
+        .red {
+            background: #ea4335;
+        }
+
+        .purple {
+            background: #8e44ad;
+        }
     </style>
 </head>
 
 <body>
 <h1>Ciruela</h1>
 <p>bobo</p>
+  <div class="calendar">
+
+    <!-- Cabecera -->
+    <div class="calendar-header">
+
+      <div></div>
+
+      <div class="day-header">
+        Hoy
+        <small>7 oct.</small>
+      </div>
+
+      <div class="day-header">
+        Mañana
+        <small>8 oct.</small>
+      </div>
+
+      <div class="day-header">
+        Pasaomañana
+        <small>9 oct.</small>
+      </div>
+
+      <div class="day-header">
+        El siguiente
+        <small>10 oct.</small>
+      </div>
+
+      <div class="day-header">
+        El siguiente del siguiente
+        <small>11 oct.</small>
+      </div>
+
+      <div class="day-header">
+        En unos dias
+        <small>12 oct.</small>
+      </div>
+
+      <div class="day-header">
+        Espero haber muerto para estas fechas
+        <small>13 oct.</small>
+      </div>
+
+    </div>
+
+
+    <!-- Cuerpo -->
+    <div class="calendar-body">
+
+      <!-- Horas -->
+      <div class="time-column" id="timeColumn"></div>
+
+      <!-- Días -->
+      <div class="days">
+
+        <div class="day" data-day="0"></div>
+        <div class="day" data-day="1"></div>
+        <div class="day" data-day="2"></div>
+        <div class="day" data-day="3"></div>
+        <div class="day" data-day="4"></div>
+        <div class="day" data-day="5"></div>
+        <div class="day" data-day="6"></div>
+
+      </div>
+
+    </div>
+
+  </div>
 <div class="container">
 
-    <h1>Calculadora de cuando me despierto</h1>
+    <h1>Esto actualiza la base de datos. No lo toques</h1>
 
-	    <div class="field">
-
-        <label for="dias">
-            Número de días
-        </label>
-
-        <input
-            type="number"
-            id="dias"
-            min="0"
-            step="1"
-            placeholder="Ejemplo: 5"
-        >
-
-    </div>
-    <div class="field">
-
-        <label for="fechaquery">
-            Consultar fecha especifica
-        </label>
-
-        <input type="date" id="fechaquery">
-
-    </div>
-
-    <!-- ============================= -->
-    <!-- CALCULAR -->
-    <!-- ============================= -->
-
-    <button
-        onclick="calcular()"
-    >
-        Calcular
-    </button>
-
-
-    <!-- ============================= -->
-    <!-- RESULTADO -->
-    <!-- ============================= -->
-
-    <div class="result">
-
-        <div class="result-label">
-            Resultado
-        </div>
-
-        <div
-            class="result-date"
-            id="resultado"
-        >
-            —
-        </div>
-
-    </div>
  <hr class="divider">
     <!-- ============================= -->
     <!-- FECHA ALMACENADA -->
@@ -259,24 +419,10 @@
 
 
 <script>
-
-    const SUPABASE_URL =
-        "https://abwuiefiknhgmhigbpvi.supabase.co";
-
-    const SUPABASE_ANON_KEY =
-        "sb_publishable_rkpINuFHTWyLaMJ6zKtglQ_AwUcVjnX";
-
-
-    /*
-     * Crear conexión con Supabase
-     */
-
-    const supabaseClient =
-        supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-
+    //Crear conexión con Supabase
+    const SUPABASE_URL = "https://abwuiefiknhgmhigbpvi.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_rkpINuFHTWyLaMJ6zKtglQ_AwUcVjnX";
+    const supabaseClient = supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
     /*
      * Elementos de la página
@@ -284,11 +430,139 @@
 
     const fechaInput = document.getElementById("fecha");
     const delayInput = document.getElementById("delay");
-    const diasInput = document.getElementById("dias");
-    const resultado = document.getElementById("resultado");
     const status = document.getElementById("status");
     const guardarButton = document.getElementById("guardar");
-	const fechaQuery = document.getElementById("fechaquery");
+    const hoy = new Date();
+
+ 
+    
+
+    const START_HOUR = 0;
+    const END_HOUR = 24;
+    const PIXELS_PER_HOUR = 28; // Altura de una hora en píxeles para dibujar franjas
+    const PIXELS_TOP_MARGIN = 20;
+
+    const slots = new Array(20);
+    Calendario();
+    async function Calendario(){
+        await cargarConfiguracion();
+        const fechaDespertar = new Date(fechaInput.value);
+        const offsetDias = Math.round((hoy-fechaDespertar)/(1000*60*60*24));
+        var contadorDivisiones = 0;
+        var startfranja = 0;
+        var endfranja = 0;
+        for (let i = offsetDias; i < slots.length + offsetDias - contadorDivisiones; i++){
+            
+            //Despertarse en minutos, aka 600 = 10:00
+            endfranja = (fechaDespertar.getHours()*60 + fechaDespertar.getMinutes()+i*delayInput.value);
+            
+            //Acostarse
+            startfranja = endfranja - 600;
+            
+            if(endfranja < 24*60){
+                if(startfranja >= 0){
+                    slots[i-offsetDias + contadorDivisiones] = {
+                    day: i - offsetDias,
+                    start:  minutesToTime(startfranja),
+                    end: minutesToTime(endfranja),
+                    title: "Mimir",
+                    color: "blue"
+                    }
+                }else{
+                    slots[i-offsetDias + contadorDivisiones] = {
+                    day: i - offsetDias,
+                    start:  "00:00",
+                    end: minutesToTime(endfranja),
+                    title: "Mimir",
+                    color: "blue"
+                    }
+                    contadorDivisiones = contadorDivisiones + 1;
+                    if(i-offsetDias + contadorDivisiones < slots.length){
+                        slots[i-offsetDias + contadorDivisiones] = {
+                        day: i - offsetDias - 1,
+                        start:  minutesToTime(24*60 + startfranja),
+                        end: "24:00",
+                        title: "Mimir",
+                        color: "blue"
+                        }
+                    }
+                }
+            }else{
+                slots[i-offsetDias + contadorDivisiones] = {
+                day: i - offsetDias,
+                start:  minutesToTime(startfranja),
+                end: "24:00",
+                title: "Mimir",
+                color: "blue"
+                }
+                contadorDivisiones = contadorDivisiones + 1;
+                //If para no pasarse del limite del array XD 
+                if(i-offsetDias + contadorDivisiones < slots.length){
+                    slots[i-offsetDias + contadorDivisiones] = {
+                    day: i - offsetDias + 1,
+                    start:  "00:00",
+                    end: minutesToTime(endfranja-24*60),
+                    title: "Mimir",
+                    color: "blue"
+                    }
+                }
+            }
+        }
+
+        //Pone 00:00-24:00 en la izquierda
+        const timeColumn = document.getElementById("timeColumn");
+
+        for (let hour = START_HOUR; hour <= END_HOUR; hour++) {
+            const time = document.createElement("div");
+            time.className = "time";
+            time.textContent =
+            String(hour).padStart(2, "0") + ":00";
+            timeColumn.appendChild(time);
+        }
+
+        //Convertir "10:30" en minutos
+        function timeToMinutes(time) {
+          const [hours, minutes] = time.split(":").map(Number);
+          return hours * 60 + minutes;
+        }
+        //Convertir minutos en "10:30"
+        function minutesToTime(minutos) {
+            if(minutos%60<10){
+                return String(Math.trunc(minutos/60)) + ":0" + String(minutos%60);
+            }
+            return String(Math.trunc(minutos/60)) + ":" + String(minutos%60);
+        }
+
+
+        /*
+         * =====================================================
+         * CREAR LAS FRANJAS
+         * =====================================================
+         */
+
+        const days = document.querySelectorAll(".day");
+
+        slots.forEach(slot => {
+
+            const day = days[slot.day];
+            if (!day) return;
+            const startMinutes = timeToMinutes(slot.start);
+            const endMinutes = timeToMinutes(slot.end);
+
+            //Lineas de la franja
+            const top = PIXELS_TOP_MARGIN + (startMinutes - START_HOUR * 60) * PIXELS_PER_HOUR / 60;
+            const height = (endMinutes - startMinutes) * PIXELS_PER_HOUR / 60;
+        
+            //Creamos el rectángulo.
+            const element = document.createElement("div");
+            element.className = `slot ${slot.color}`;
+            element.style.top = `${top}px`;
+            element.style.height = `${height}px`;
+            element.innerHTML = `<div class="slot-title">${slot.title}</div><div class="slot-time">${slot.start} - ${slot.end}</div>`;
+            day.appendChild(element);
+
+        });
+    }
 
     /*
      * =====================================================
@@ -306,7 +580,6 @@
      * CARGAR CONFIGURACIÓN
      * =====================================================
      */
-
     async function cargarConfiguracion() {
         mostrarStatus("Cargando configuración...", "");
 
@@ -351,7 +624,6 @@
         delayInput.value = data.delay_minutos;
         mostrarStatus("Configuración cargada.","success");
     }
-
 
     /*
      * =====================================================
@@ -404,78 +676,6 @@
         guardarButton.disabled = false;
         guardarButton.textContent ="Guardar cambios";
 	}
-
-
-    /*
-     * =====================================================
-     * CALCULAR RESULTADO
-     * =====================================================
-     *
-     * Fórmula:
-     *
-     * fecha +
-     * (días × 24 horas) +
-     * (delay × días)
-     *
-     */
-
-    function calcular() {
-
-        const fechaValor = fechaInput.value;
-        const delay = Number(delayInput.value);
-        const dias = Number(diasInput.value);
-		const fechaObjetivo = fechaQuery.value;
-
-
-        //Validaciones
-        if (!fechaInput.value) {
-            alert("Introduce una fecha y hora.");
-            return;
-        }
-		
-        if (isNaN(delay) || delay < 0) {
-            alert("Introduce un delay válido.");
-            return;
-        }
-
-        if (isNaN(dias) || dias < 0) {
-            alert("Introduce un número de días válido.");
-            return;
-        }
-
-        //Crear fecha
-        const fechaDespertar = new Date(fechaInput.value);
-		const fechaDormir = new Date(fechaDespertar);
-
-
-        // Conviertes a minutos y lo sumas a la fecha
-        const minutosDeDias = dias * 24 * 60;
-		const minutosDeDelay = delay * dias;
-
-        fechaDespertar.setMinutes(fechaDespertar.getMinutes() + minutosDeDias + minutosDeDelay);
-		fechaDormir.setMinutes(fechaDespertar.getMinutes() - 600);
- 		
-		//Formatear resultado
-        const opciones = {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: false
-        };
-		
-        resultado.textContent = "Me duermo: " + fechaDormir.toLocaleString("es-ES",opciones) + "\n" + "Me despierto: " + fechaDespertar.toLocaleString("es-ES",opciones);
-    }
-
-
-    /*
-     * =====================================================
-     * INICIALIZAR
-     * =====================================================
-     */
-
-    cargarConfiguracion();
 
 </script>
 
